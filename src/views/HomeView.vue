@@ -1,6 +1,17 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 let products = ref([]);
+
+const cartProducts = ref([]);
+
+const totoalPrise = computed(() => {
+return cartProducts.value.reduce((totoal, product) => totoal + product.price, 0)
+});
+
+const addToCart = (product) =>{
+cartProducts.value.push(product);
+localStorage.setItem('cart', JSON.stringify(cartProducts.value));
+};
 
 fetch('https://dummyjson.com/products')
 .then(res => res.json())
@@ -29,17 +40,17 @@ fetch('https://dummyjson.com/products')
               stroke-width="2"
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span class="badge badge-sm indicator-item">8</span>
+          <span class="badge badge-sm indicator-item">{{ cartProducts.length }}</span>
         </div>
       </div>
       <div
         tabindex="0"
         class="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-52 shadow">
         <div class="card-body">
-          <span class="text-lg font-bold">8 Items</span>
-          <span class="text-info">Subtotal: $999</span>
+          <span class="text-lg font-bold">{{ cartProducts.length }} товарів</span>
+          <span class="text-info">Сума: ${{ totoalPrise }}</span>
           <div class="card-actions">
-            <button class="btn btn-primary btn-block">View cart</button>
+            <a href="/cart" class="btn btn-primary btn-block">В корзину</a>
           </div>
         </div>
       </div>
@@ -67,20 +78,22 @@ fetch('https://dummyjson.com/products')
     </div>
   </div>
 </div>
-  <div class="flex flex-wrap gap-4">
-    <div v-for="product in products" :key="product.id" class="card bg-base-100 w-96 shadow-xl">
+
+  <div class="flex flex-wrap gap-4 mx-auto conteiner">
+    <div v-for="product in products" :key="product.id" class="card bg-base-100 w-80 shadow-xl">
   <figure>
-    <img :src="product.images[0]" :alt="product.title"/>
+    <img style="width: 100%;max-width: 150px;" :src="product.images[0]" :alt="product.title"/>
   </figure>
   <div class="card-body">
+    <p class="text-center font-bold text-lg">{{ product.price }}</p>
     <h2 class="card-title">{{ product.title }}</h2>
-    <p>{{ product.discription }}</p>
+    <p>{{ product.description }}</p>
     <div class="card-actions justify-end">
-      <button class="btn btn-primary">Buy Now</button>
+      <button class="btn btn-primary" @click="addToCart(product)">В корзину</button>
       </div>
     </div>
   </div>
   </div>
 </dev>
-  
+
 </template>
