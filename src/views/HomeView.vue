@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 let products = ref([])
 
 const cartProducts = ref([])
@@ -25,6 +25,13 @@ const addToCart = (product) => {
 
   localStorage.setItem('cart', JSON.stringify(cartProducts.value))
 }
+
+onMounted(() => {
+  const localProducts = localStorage.getItem('cart')
+  if (localProducts) {
+    cartProducts.value = JSON.parse(localProducts)
+  }
+})
 
 fetch('https://dummyjson.com/products')
   .then((res) => res.json())

@@ -3,7 +3,7 @@
     <ul class="list bg-base-100 rounded-box shadow-md">
       <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Список товорів у кошику</li>
 
-      <li v-for="product in localProducts" :key="product.id" class="list-row">
+      <li v-for="product in localStorageCartProducts" :key="product.id" class="list-row">
         <div>
           <img
             style="width: 100%; max-width: 150px"
@@ -26,7 +26,7 @@
             <path d="M15 12H9" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
           </svg>
         </button>
-        <div class="font-bolt"><input type="number" :value="product.count" /></div>
+        <div class="font-bolt"><input class="w-10 p-1" type="number" :value="product.count" /></div>
 
         <button class="btn btn-square" @click="countPlus(product)">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,8 +61,19 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+let localStorageCartProducts = ref([])
 let localProducts = localStorage.getItem('cart')
 if (localProducts) {
-  localProducts = JSON.parse(localProducts)
+  localStorageCartProducts.value = JSON.parse(localProducts)
+}
+
+function countPlus(product) {
+  product.count += 1
+  localStorage.setItem('cart', JSON.stringify(localStorageCartProducts.value))
+}
+function countMinus(product) {
+  if (product.count > 1) product.count -= 1
+  localStorage.setItem('cart', JSON.stringify(localStorageCartProducts.value))
 }
 </script>
