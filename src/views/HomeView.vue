@@ -102,7 +102,7 @@ fetch('https://dummyjson.com/products')
                 <span class="badge">New</span>
               </a>
             </li>
-            <li><a>Settings</a></li>
+            <li><a href="/orders">Orders</a></li>
             <li><a>Logout</a></li>
           </ul>
         </div>

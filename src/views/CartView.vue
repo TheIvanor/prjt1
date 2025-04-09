@@ -55,7 +55,7 @@
         <div class="font-bolt">{{ (product.price * product.count).toFixed(2) }}$</div>
       </li>
     </ul>
-    <div class="flex flex-col gap-2">
+    <div v-if="localStorageCartProducts.length" class="flex flex-col gap-2">
       <input v-model="userName" type="text" placeholder="Введіть ваше ім'я" class="input" />
       <label class="input validator">
         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -85,11 +85,12 @@
         />
       </label>
       <p class="validator-hint">Must be 10 digits</p>
-    </div>
 
-    <div class="flex justify-end mt-5">
-      <button class="btn btn-primary" @click="createOrder">Оформити замовлення</button>
+      <div class="flex justify-end mt-5">
+        <button class="btn btn-primary" @click="createOrder">Оформити замовлення</button>
+      </div>
     </div>
+    <div v-else>Корзина порожня</div>
   </div>
 </template>
 
@@ -114,14 +115,25 @@ function countMinus(product) {
 }
 
 function createOrder() {
-  localStorage.setItem(
-    'order',
-    JSON.stringify({
-      name: userName.value,
-      phone: userPhone.value,
-      order: localStorageCartProducts.value,
-    }),
-  )
+  const orders = localStorage.getItem('orders')
+
+  if (orders) {
+    localStorage.setItem(
+      'orders',
+      JSON.stringify([
+        ...JSON.parse(orders),
+        { name: userName.value, phone: userPhone.value, order: localStorageCartProducts.value },
+      ]),
+    )
+  } else {
+    localStorage.setItem(
+      'orders',
+      JSON.stringify([
+        { name: userName.value, phone: userPhone.value, order: localStorageCartProducts.value },
+      ]),
+    )
+  }
   localStorage.removeItem('cart')
+  localStorageCartProducts.value = []
 }
 </script>
