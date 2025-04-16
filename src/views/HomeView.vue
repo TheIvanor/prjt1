@@ -15,13 +15,9 @@ const totoalCountProductsInCart = computed(() => {
 })
 
 const addToCart = (product) => {
-  const findIndex = cartProducts.value.findIndex((item) => item.id === product.id)
+  product.inCart = 1
 
-  if (findIndex !== -1) {
-    cartProducts.value[findIndex].count += 1
-  } else {
-    cartProducts.value.push(product)
-  }
+  cartProducts.value.push(product)
 
   localStorage.setItem('cart', JSON.stringify(cartProducts.value))
 }
@@ -38,13 +34,59 @@ fetch('https://dummyjson.com/products')
   .then((data) => {
     products.value = data.products.map((product) => {
       product.count = 1
+      product.inCart = cartProducts.value.some((item) => item.id === product.id)
       return product
     })
   })
+
+function openModal() {
+  const element = document.getElementById('my_modal_1')
+  element.classList.add('modal-open')
+}
+
+function closeModal() {
+  const element = document.getElementById('my_modal_1')
+  element.classList.remove('modal-open')
+}
 </script>
 
 <template>
-  <dev>
+  <div>
+    <dialog class="modal" id="my_modal_1">
+      <div class="modal-box">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            @click="closeModal"
+          >
+            ✕
+          </button>
+        </form>
+        <h3 class="text-lg font-bold">Корзина</h3>
+        <div class="overflow-x-auto">
+          <table class="table table-xs">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in cartProducts" :key="item.id">
+                <th>{{ index + 1 }}</th>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.price }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <a href="/cart" class="btn btn-primary">Оформити замовлення</a>
+      </div>
+    </dialog>
     <div class="navbar bg-primary text-pimary-content shadow-sm">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">daisyUI</a>
@@ -123,10 +165,42 @@ fetch('https://dummyjson.com/products')
           <h2 class="card-title">{{ product.title }}</h2>
           <p>{{ product.description }}</p>
           <div class="card-actions justify-end">
-            <button class="btn btn-primary" @click="addToCart(product)">В корзину</button>
+            <button v-if="!product.inCart" class="btn btn-primary px-6" @click="addToCart(product)">
+              <svg
+                class="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.29977 5H21L19 12H7.37671M20 16H8L6 3H3M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"
+                  stroke="#ffffff"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+
+            <button v-else class="btn btn-primary px-6" @click="openModal">
+              <svg
+                class="h-6 w-6"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 5L19 12H7.37671M20 16H8L6 3H3M11 6L13 8L17 4M9 20C9 20.5523 8.55228 21 8 21C7.44772 21 7 20.5523 7 20C7 19.4477 7.44772 19 8 19C8.55228 19 9 19.4477 9 20ZM20 20C20 20.5523 19.5523 21 19 21C18.4477 21 18 20.5523 18 20C18 19.4477 18.4477 19 19 19C19.5523 19 20 19.4477 20 20Z"
+                  stroke="#00ff00"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     </div>
-  </dev>
+  </div>
 </template>
