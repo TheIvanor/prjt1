@@ -84,7 +84,10 @@ function closeModal() {
           </table>
         </div>
 
-        <a href="/cart" class="btn btn-primary">Оформити замовлення</a>
+        <div class="flex justify-between">
+          <a href="/cart" class="btn btn-primary">Оформити замовлення</a>
+          <a href="#" @click="closeModal" class="btn btn-primary">Продовжити покупку</a>
+        </div>
       </div>
     </dialog>
     <div class="navbar bg-primary text-pimary-content shadow-sm">

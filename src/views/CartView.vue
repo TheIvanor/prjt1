@@ -53,6 +53,46 @@
           </svg>
         </button>
         <div class="font-bolt">{{ (product.price * product.count).toFixed(2) }}$</div>
+
+        <button class="btn btn-sqeare" @click="openModal(product)">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10 12V17"
+              stroke="#ff0000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14 12V17"
+              stroke="#ff0000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M4 7H20"
+              stroke="#ff0000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10"
+              stroke="#ff0000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+              stroke="#ff0000"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
       </li>
     </ul>
     <div v-if="localStorageCartProducts.length" class="flex flex-col gap-2">
@@ -92,6 +132,29 @@
     </div>
     <div v-else>Корзина порожня</div>
   </div>
+
+  <dialog id="my_modal_3" class="modal">
+    <div class="modal-box">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="closeModal">
+          ✕
+        </button>
+      </form>
+      <h3 class="text-lg font-bold">Видалити товар?</h3>
+      <div class="flex justify-center items-center">
+        <img
+          style="width: 100%; max-width: 150px"
+          :src="currentDeleteProduct.images && currentDeleteProduct.images[0]"
+          :alt="currentDeleteProduct.title"
+        />
+        <b>{{ currentDeleteProduct.title }}</b>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn w-1/2 btn-primary" @click="removeProduct">Так</button>
+        <button class="btn w-1/2 btn-primary" @click="closeModal">Ні</button>
+      </div>
+    </div>
+  </dialog>
 </template>
 
 <script setup>
@@ -100,6 +163,7 @@ let localStorageCartProducts = ref([])
 let localProducts = localStorage.getItem('cart')
 let userName = ref('')
 let userPhone = ref('')
+let currentDeleteProduct = ref({})
 
 if (localProducts) {
   localStorageCartProducts.value = JSON.parse(localProducts)
@@ -135,5 +199,23 @@ function createOrder() {
   }
   localStorage.removeItem('cart')
   localStorageCartProducts.value = []
+}
+
+function removeProduct() {
+  localStorageCartProducts.value = localStorageCartProducts.value.filter(
+    (item) => item.id !== currentDeleteProduct.value.id,
+  )
+  localStorage.setItem('cart', JSON.stringify(localStorageCartProducts.value))
+  closeModal()
+}
+
+function openModal(product) {
+  currentDeleteProduct.value = product
+  const modal = document.getElementById('my_modal_3')
+  modal.classList.add('modal-open')
+}
+function closeModal() {
+  const modal = document.getElementById('my_modal_3')
+  modal.classList.remove('modal-open')
 }
 </script>
